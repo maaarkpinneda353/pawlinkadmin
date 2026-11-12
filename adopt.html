@@ -1,3 +1,26 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Adopt a pet · PawLink Admin</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
-<body><div data-admin-shell><main class="page-content"><header class="page-heading"><div><p class="eyebrow">FIND A FRIEND</p><h1>Adopt a pet</h1><p>Help every pet find a safe, loving home.</p></div></header><section class="empty-state"><div class="empty-icon" aria-hidden="true">🐾</div><h2>Find your new best friend</h2><p>Adoptable pets from the PawLink community will be featured here.</p><a class="panel-link" href="search.html">Explore pet listings →</a></section></main></div></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adopt a Pet · PawLink Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="adopt.css">
+  <script src="app.js" defer></script>
+  <script src="adopt.js" defer></script>
+</head>
+<body>
+  <div data-admin-shell>
+    <main class="page-content adopt-page" data-adopt-page>
+      <header class="page-heading adopt-heading"><div><p class="eyebrow">FIND A FRIEND</p><h1>Adopt a pet</h1><p>Manage profiles and help every pet find a safe, loving home.</p></div><button class="button button-primary add-pet-button" type="button" data-add-pet>＋ Add Adoptable Pet</button></header>
+      <section class="adopt-hero" aria-label="Adoption catalog introduction"><div><span class="adopt-hero-kicker">A NEW CHAPTER STARTS HERE</span><h2>Meet your next<br>best friend.</h2><p>Every profile is a chance to bring a family together.</p></div><span class="adopt-hero-paw" aria-hidden="true">🐾</span></section>
+      <section class="adopt-catalog" aria-labelledby="pets-heading"><div class="section-title-row"><div><p class="eyebrow">AVAILABLE NOW</p><h2 id="pets-heading">Adoptable pets</h2></div><span class="adopt-count" data-pet-count></span></div><div class="pet-grid" data-pet-grid aria-live="polite"></div></section>
+      <section class="adoption-inquiries" aria-labelledby="inquiries-heading"><div class="section-title-row"><div><p class="eyebrow">NEXT STEPS</p><h2 id="inquiries-heading">Adoption inquiries</h2></div><span class="pending-count" data-pending-count>0 pending</span></div><div class="inquiry-list" data-inquiry-list aria-live="polite"></div></section>
+      <dialog class="pet-dialog" data-pet-dialog aria-labelledby="pet-dialog-title"><form class="pet-form" data-pet-form><div class="pet-dialog-heading"><div><p class="eyebrow">ADOPTION CATALOG</p><h2 id="pet-dialog-title">Add adoptable pet</h2></div><button class="pet-dialog-close" type="button" aria-label="Close dialog" data-close-pet>×</button></div><input type="hidden" name="id"><div class="pet-form-grid"><div><label for="pet-name">Name</label><input id="pet-name" name="name" required maxlength="80" placeholder="Pet name"></div><div><label for="pet-species">Species</label><select id="pet-species" name="species" required><option value="Dog">Dog</option><option value="Cat">Cat</option><option value="Other">Other</option></select></div><div><label for="pet-breed">Breed</label><input id="pet-breed" name="breed" required maxlength="100" placeholder="e.g. Labrador mix"></div><div><label for="pet-age">Age</label><input id="pet-age" name="age" required maxlength="40" placeholder="e.g. 2 years"></div><div class="pet-form-wide"><label for="pet-location">Location</label><input id="pet-location" name="location" required maxlength="120" placeholder="City, State"></div><div class="pet-form-wide"><label for="pet-image">Image URL <span class="optional-text">(optional)</span></label><input id="pet-image" name="image" type="url" placeholder="https://example.com/pet.jpg"></div><div class="pet-form-wide"><label for="pet-description">About this pet</label><textarea id="pet-description" name="description" rows="3" maxlength="500" placeholder="Tell adopters about this pet…"></textarea></div><div class="pet-form-wide"><label for="pet-status">Status</label><select id="pet-status" name="status"><option value="Available">Available</option><option value="Pending">Pending</option><option value="Adopted">Adopted</option></select></div></div><div class="pet-dialog-actions"><button class="button pet-cancel" type="button" data-close-pet>Cancel</button><button class="button button-primary" type="submit">Save pet profile</button></div></form></dialog>
+    </main>
+  </div>
+</body>
+</html>
