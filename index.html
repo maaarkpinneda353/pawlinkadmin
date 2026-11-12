@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Admin Login · PawLink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="login-page">
+  <main class="login-layout">
+    <section class="auth-card" aria-labelledby="login-title">
+      <a class="brand brand-centered" href="index.html" aria-label="PawLink admin login">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" role="img"><path d="M20 31.2c-2.7-2.1-10.7-7.5-10.7-14.4a6.1 6.1 0 0 1 10.7-4 6.1 6.1 0 0 1 10.7 4c0 6.9-8 12.3-10.7 14.4Z"/><circle cx="11" cy="9" r="3"/><circle cx="19" cy="6.5" r="3"/><circle cx="27" cy="9" r="3"/></svg></span>
+        <span class="brand-name">PawLink<span class="brand-admin">ADMIN</span></span>
+      </a>
+      <div class="auth-heading">
+        <p class="eyebrow">WELCOME BACK</p>
+        <h1 id="login-title">Admin sign in</h1>
+        <p class="muted">Sign in to manage your PawLink community.</p>
+      </div>
+      <form id="login-form" class="login-form">
+        <label for="username">Email or username</label>
+        <input id="username" name="username" type="text" autocomplete="username" placeholder="you@example.com" required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+        <button class="button button-primary button-full" type="submit">Sign in <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="login-footnote"><span class="secure-dot" aria-hidden="true"></span> Secure administrator access</p>
+    </section>
+    <p class="login-copyright">© 2025 PawLink · Helping pets find their people.</p>
+  </main>
+</body>
+</html>
