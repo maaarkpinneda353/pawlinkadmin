@@ -1,3 +1,26 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Search pets · PawLink Admin</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
-<body><div data-admin-shell><main class="page-content"><header class="page-heading"><div><p class="eyebrow">DISCOVER</p><h1>Search pets</h1><p>Find pets and listings shared by your community.</p></div></header><section class="panel" aria-label="Pet search"><form class="login-form" role="search"><label for="pet-search">Search by pet name or location</label><input id="pet-search" type="search" placeholder="Try “Luna” or “Downtown”"><button class="button button-primary" type="button">Search pets <span aria-hidden="true">⌕</span></button></form></section><div class="empty-state" style="margin-top:18px"><div class="empty-icon" aria-hidden="true">🐕</div><h2>Your pet search starts here</h2><p>Search listings to discover pets who are looking for their people.</p></div></main></div></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search pets · PawLink Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div data-admin-shell>
+    <main class="page-content global-search-page">
+      <header class="page-heading"><div><p class="eyebrow">PLATFORM DIRECTORY</p><h1>Global search</h1><p>Find records across lost, found, adoption, and shop listings.</p></div></header>
+      <section class="search-panel" aria-label="Search all PawLink records">
+        <form class="global-search-form" role="search" data-global-search-form><label class="visually-hidden" for="global-search-input">Search all records</label><span class="search-leading-icon" aria-hidden="true">⌕</span><input id="global-search-input" type="search" autocomplete="off" placeholder="Search by name, location, description, or ID…" data-global-search-input><kbd>/</kbd><button class="search-clear" type="button" data-search-clear aria-label="Clear search" hidden>×</button></form>
+        <div class="filter-heading"><span>Filter by category</span><span class="results-count" data-search-count aria-live="polite">0 records</span></div>
+        <div class="filter-pills" role="group" aria-label="Record categories" data-search-filters><button class="filter-pill is-selected" type="button" data-category="all" aria-pressed="true">All <span data-filter-count="all">0</span></button><button class="filter-pill" type="button" data-category="lost" aria-pressed="false">Lost <span data-filter-count="lost">0</span></button><button class="filter-pill" type="button" data-category="found" aria-pressed="false">Found <span data-filter-count="found">0</span></button><button class="filter-pill" type="button" data-category="adoption" aria-pressed="false">Adoption <span data-filter-count="adoption">0</span></button><button class="filter-pill" type="button" data-category="shop" aria-pressed="false">Shop <span data-filter-count="shop">0</span></button></div>
+      </section>
+      <section class="search-results-section" aria-labelledby="search-results-heading"><div class="section-title-row search-results-heading"><div><p class="eyebrow">DIRECTORY</p><h2 id="search-results-heading">Platform records</h2></div><span class="muted search-hint">Select a record to open it for editing</span></div><div class="record-grid" data-search-results aria-live="polite"><div class="empty-state search-empty"><div class="empty-icon" aria-hidden="true">⌕</div><h2>Search across PawLink</h2><p>Type a name, keyword, location, or record ID to find listings and reports.</p></div></div></section>
+    </main>
+  </div>
+</body>
+</html>

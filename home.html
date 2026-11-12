@@ -3,33 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafc">
   <title>Home · PawLink Admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css"><script src="app.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
-<body><div data-admin-shell>
-  <main class="page-content">
-    <header class="page-heading"><div><p class="eyebrow">OVERVIEW</p><h1>Good morning, Admin 👋</h1><p>Here’s what’s happening across your PawLink community.</p></div><div class="date-chip"><span aria-hidden="true">◷</span><span id="today-date">Your admin overview</span></div></header>
-    <section class="welcome-card" aria-label="Welcome"><div><h2>Every little paw deserves a loving home.</h2><p>Thanks for making a difference in your community today.</p></div><span class="welcome-illustration" aria-hidden="true">🐾</span></section>
-    <section class="stats-grid" aria-label="Community statistics">
-      <article class="stat-card"><div class="stat-top"><span class="stat-label">Pets listed</span><span class="stat-icon" aria-hidden="true">♡</span></div><div class="stat-number">248</div><div class="stat-change">↑ 12% <span>this month</span></div></article>
-      <article class="stat-card"><div class="stat-top"><span class="stat-label">Successful adoptions</span><span class="stat-icon" aria-hidden="true">⌂</span></div><div class="stat-number">36</div><div class="stat-change">↑ 8% <span>this month</span></div></article>
-      <article class="stat-card"><div class="stat-top"><span class="stat-label">Open reports</span><span class="stat-icon" aria-hidden="true">▤</span></div><div class="stat-number">14</div><div class="stat-change">↓ 3% <span>since last week</span></div></article>
-      <article class="stat-card"><div class="stat-top"><span class="stat-label">Community donations</span><span class="stat-icon" aria-hidden="true">♡</span></div><div class="stat-number">$4,820</div><div class="stat-change">↑ 18% <span>this month</span></div></article>
-    </section>
-    <div class="dashboard-grid">
-      <section class="panel" aria-labelledby="activity-heading"><div class="panel-heading"><h2 id="activity-heading">Recent activity</h2><a class="panel-link" href="reports.html">View reports</a></div><div class="activity-list">
-        <article class="activity-item"><span class="activity-badge" aria-hidden="true">♡</span><div class="activity-copy"><p><strong>Buddy</strong> was adopted by a new family</p><time datetime="2025-03-08">12 minutes ago</time></div><span class="status-pill">Completed</span></article>
-        <article class="activity-item"><span class="activity-badge" aria-hidden="true">▤</span><div class="activity-copy"><p>New community report submitted near <strong>Maple Park</strong></p><time datetime="2025-03-08">38 minutes ago</time></div></article>
-        <article class="activity-item"><span class="activity-badge" aria-hidden="true">＋</span><div class="activity-copy"><p><strong>Sunny</strong> was added to the pet listings</p><time datetime="2025-03-08">1 hour ago</time></div></article>
-      </div></section>
-      <section class="panel" aria-labelledby="actions-heading"><div class="panel-heading"><h2 id="actions-heading">Quick actions</h2></div><div class="quick-actions">
-        <a class="quick-action" href="search.html"><span class="quick-action-icon" aria-hidden="true">⌕</span><span><strong>Find a pet</strong><small>Browse community listings</small></span><span class="arrow" aria-hidden="true">→</span></a>
-        <a class="quick-action" href="reports.html"><span class="quick-action-icon" aria-hidden="true">▤</span><span><strong>Review reports</strong><small>See community submissions</small></span><span class="arrow" aria-hidden="true">→</span></a>
-        <a class="quick-action" href="donations.html"><span class="quick-action-icon" aria-hidden="true">↗</span><span><strong>Donation analytics</strong><small>Track community giving</small></span><span class="arrow" aria-hidden="true">→</span></a>
-      </div></section>
-    </div>
-  </main>
-</div></body>
+<body>
+  <div data-admin-shell>
+    <main class="page-content dashboard-home">
+      <header class="page-heading"><div><p class="eyebrow">ADMIN OVERVIEW</p><h1>Command center</h1><p>Your at-a-glance view of the PawLink platform.</p></div><div class="date-chip"><span aria-hidden="true">◷</span><time id="dashboard-date"></time></div></header>
+
+      <section class="command-hero" aria-labelledby="hero-title">
+        <div class="command-hero-copy"><span class="hero-kicker"><span class="hero-pulse"></span> PAWLINK ADMIN</span><h2 id="hero-title">Command Center &amp;<br class="hero-break"> Platform Overview</h2><p>One caring community. Countless happy beginnings. Keep everything moving from here.</p><a class="hero-link" href="search.html">Explore the platform <span aria-hidden="true">→</span></a></div>
+        <div class="hero-art" aria-hidden="true"><span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span><span class="hero-paw">🐾</span><span class="hero-spark spark-one">✦</span><span class="hero-spark spark-two">✧</span></div>
+      </section>
+
+      <section class="dashboard-section" aria-labelledby="kpi-heading"><div class="section-title-row"><div><p class="eyebrow">LIVE SNAPSHOT</p><h2 id="kpi-heading">Platform at a glance</h2></div><span class="live-label"><span class="live-dot"></span> Live data</span></div>
+        <div class="stats-grid kpi-grid">
+          <article class="stat-card"><div class="stat-top"><span class="stat-label">Active reports</span><span class="stat-icon" aria-hidden="true">▤</span></div><div class="stat-number" data-kpi="reports">0</div><div class="kpi-note">Reports needing attention</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-label">Adoptable pets</span><span class="stat-icon" aria-hidden="true">♡</span></div><div class="stat-number" data-kpi="pets">0</div><div class="kpi-note">Pets looking for a home</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-label">Shop listings</span><span class="stat-icon" aria-hidden="true">▧</span></div><div class="stat-number" data-kpi="shop">0</div><div class="kpi-note">Items in the pet shop</div></article>
+          <article class="stat-card"><div class="stat-top"><span class="stat-label">Total funds raised</span><span class="stat-icon" aria-hidden="true">↗</span></div><div class="stat-number" data-kpi="funds">$0</div><div class="kpi-note">Community contributions</div></article>
+        </div>
+      </section>
+
+      <section class="dashboard-section" aria-labelledby="quick-links-heading"><div class="section-title-row"><div><p class="eyebrow">GET THINGS DONE</p><h2 id="quick-links-heading">Quick actions</h2></div><a class="panel-link" href="search.html">Search all records <span aria-hidden="true">→</span></a></div>
+        <div class="action-grid">
+          <a class="action-card" href="reports.html"><span class="action-icon action-blue" aria-hidden="true">▤</span><span class="action-copy"><strong>Community Reports</strong><small>Review lost, found, and community reports</small></span><span class="action-arrow" aria-hidden="true">↗</span></a>
+          <a class="action-card" href="adopt.html"><span class="action-icon action-rose" aria-hidden="true">♡</span><span class="action-copy"><strong>Adopt a Pet</strong><small>Manage adoptable pets and applications</small></span><span class="action-arrow" aria-hidden="true">↗</span></a>
+          <a class="action-card" href="shop.html"><span class="action-icon action-amber" aria-hidden="true">▧</span><span class="action-copy"><strong>Pet Shop</strong><small>Manage products and shop listings</small></span><span class="action-arrow" aria-hidden="true">↗</span></a>
+          <a class="action-card" href="donations.html"><span class="action-icon action-green" aria-hidden="true">↗</span><span class="action-copy"><strong>Donation Analytics</strong><small>Track giving and community impact</small></span><span class="action-arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="dashboard-section broadcast-layout" aria-label="System broadcasts">
+        <div class="panel broadcast-panel"><div class="panel-heading"><div><p class="eyebrow">COMMUNITY COMMUNICATION</p><h2>System broadcast</h2></div><span class="broadcast-mark" aria-hidden="true">📣</span></div><p class="muted broadcast-description">Publish an official announcement to the community feed and alerts.</p>
+          <form id="broadcast-form" class="broadcast-form"><label for="broadcast-message">Announcement</label><textarea id="broadcast-message" name="message" rows="4" maxlength="500" placeholder="Share an important update with the PawLink community…" required></textarea><div class="broadcast-form-footer"><span class="character-count"><span data-character-count>0</span>/500</span><button class="button button-primary" type="submit">Publish announcement <span aria-hidden="true">→</span></button></div><p class="form-feedback" data-broadcast-feedback role="status" aria-live="polite"></p></form>
+        </div>
+        <aside class="panel broadcast-history"><div class="panel-heading"><h2>Latest announcements</h2><span class="history-count" data-announcement-count>0</span></div><div class="announcement-list" data-announcement-list><p class="muted announcement-empty">Your published announcements will appear here.</p></div></aside>
+      </section>
+    </main>
+  </div>
+</body>
 </html>
