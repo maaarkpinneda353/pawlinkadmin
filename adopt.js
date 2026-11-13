@@ -17,18 +17,19 @@
     { id: 'pawlink-inquiry-102', petId: 'pawlink-pet-coco', petName: 'Coco', applicant: 'Jordan Blake', email: 'j.blake@example.com', note: 'Coco sounds like a perfect match for our active family.', createdAt: '2025-03-07T17:05:00.000Z', status: 'Pending' }
   ];
 
-  // app.js rebuilds the shell at DOMContentLoaded. Wait until it is complete,
-  // then attach to the final page markup. Also works when loaded dynamically.
-  function waitForAdoptPage(attempt = 0) {
+  // Wait for app.js to finish replacing the shell before binding page controls.
+  function boot() {
     const page = document.querySelector('[data-adopt-page]');
-    if (page && page.querySelector('[data-pet-grid]') && page.querySelector('[data-inquiry-list]')) {
-      initAdoption(page);
-      return;
-    }
-    if (attempt < 30) setTimeout(() => waitForAdoptPage(attempt + 1), 50);
+    if (!page || page.dataset.adoptInitialized === 'true') return;
+    if (!page.querySelector('[data-pet-grid]') || !page.querySelector('[data-inquiry-list]')) return;
+    initAdoption(page);
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => waitForAdoptPage(), { once: true });
-  else waitForAdoptPage();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(boot, 0), { once: true });
+  } else {
+    setTimeout(boot, 0);
+  }
+  new MutationObserver(boot).observe(document.documentElement, { childList: true, subtree: true });
 
   function initAdoption(page) {
     if (page.dataset.adoptInitialized === 'true') return;
@@ -36,7 +37,8 @@
     const inquiryList = page.querySelector('[data-inquiry-list]');
     const dialog = page.querySelector('[data-pet-dialog]');
     const form = page.querySelector('[data-pet-form]');
-    if (!grid || !inquiryList || !dialog || !form) return;
+    const addButton = page.querySelector('[data-add-pet]');
+    if (!grid || !inquiryList || !dialog || !form || !addButton) return;
     page.dataset.adoptInitialized = 'true';
 
     const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -56,45 +58,43 @@
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) return parsed.filter((item) => item && typeof item === 'object');
         }
-      } catch (error) { console.warn(`Invalid ${key} local data.`, error); }
-      try { localStorage.setItem(key, JSON.stringify(seed)); } catch (error) { console.error(`Unable to initialize ${key}.`, error); }
+      } catch (error) { console.warn(`Invalid ${key}; restoring sample data.`, error); }
+      try { localStorage.setItem(key, JSON.stringify(seed)); } catch (error) { console.error(`Could not initialize ${key}.`, error); }
       return seed.slice();
     }
     const readPets = () => readArray(PETS_KEY, PET_SEEDS);
     const readInquiries = () => readArray(INQUIRIES_KEY, INQUIRY_SEEDS);
-    function persist(key, value) {
-      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    function save(key, records) {
+      try { localStorage.setItem(key, JSON.stringify(records)); return true; }
       catch (error) {
-        console.error(`Unable to persist ${key}.`, error);
+        console.error(`Could not save ${key}.`, error);
         const feedback = page.querySelector('[data-pet-feedback]');
-        if (feedback) feedback.textContent = 'Could not save changes in this browser. Check available local storage and try again.';
+        if (feedback) feedback.textContent = 'Could not save changes in browser storage. Please try again.';
         return false;
       }
     }
-    if (localStorage.getItem(PETS_KEY) === null) persist(PETS_KEY, PET_SEEDS);
-    if (localStorage.getItem(INQUIRIES_KEY) === null) persist(INQUIRIES_KEY, INQUIRY_SEEDS);
+    if (localStorage.getItem(PETS_KEY) === null) save(PETS_KEY, PET_SEEDS);
+    if (localStorage.getItem(INQUIRIES_KEY) === null) save(INQUIRIES_KEY, INQUIRY_SEEDS);
 
     function renderPets() {
-      const entries = readPets();
+      const records = readPets();
       const count = page.querySelector('[data-pet-count]');
-      if (count) count.textContent = `${entries.length} ${entries.length === 1 ? 'profile' : 'profiles'}`;
-      grid.innerHTML = entries.length ? entries.map((pet) => {
+      if (count) count.textContent = `${records.length} ${records.length === 1 ? 'profile' : 'profiles'}`;
+      grid.innerHTML = records.length ? records.map((pet) => {
         const id = String(pet.id ?? '');
         const status = ['Available', 'Pending', 'Adopted'].includes(pet.status) ? pet.status : 'Available';
         const image = safeImageURL(pet.image);
-        const accepted = pet.acceptedApplicant ? `<div class="accepted-applicant"><span class="accepted-check" aria-hidden="true">✓</span><span><strong>Application accepted</strong><small>${escapeHTML(pet.acceptedApplicant)}${pet.acceptedEmail ? ` · ${escapeHTML(pet.acceptedEmail)}` : ''}${pet.acceptedAt ? ` · ${escapeHTML(dateLabel(pet.acceptedAt))}` : ''}</small></span></div>` : '';
-        return `<article class="pet-card"><div class="pet-photo-frame">${image ? `<img class="pet-photo" src="${escapeHTML(image)}" alt="${escapeHTML(pet.name)}" loading="lazy">` : '<div class="pet-photo-placeholder" aria-hidden="true">🐾</div>'}<span class="pet-status status-${status.toLowerCase()}">${status}</span><div class="pet-card-actions"><button type="button" data-edit-pet="${escapeHTML(id)}" aria-label="Edit ${escapeHTML(pet.name)}">Edit</button><button type="button" data-delete-pet="${escapeHTML(id)}" aria-label="Delete ${escapeHTML(pet.name)}">Delete</button></div></div><div class="pet-card-content"><div class="pet-title-row"><h3>${escapeHTML(pet.name || 'Unnamed pet')}</h3><span>${escapeHTML(pet.species || 'Pet')}</span></div><p class="pet-details">${escapeHTML(pet.breed || 'Breed not specified')} <span>·</span> ${escapeHTML(pet.age || 'Age unknown')}</p><p class="pet-location"><span aria-hidden="true">⌖</span> ${escapeHTML(pet.location || 'Location not specified')}</p>${pet.description ? `<p class="pet-description">${escapeHTML(pet.description)}</p>` : ''}${accepted}</div></article>`;
-      }).join('') : '<div class="pet-empty"><span aria-hidden="true">🐾</span><h2>No pet profiles yet</h2><p>Add an adoptable pet to get started.</p></div>';
+        const accepted = pet.acceptedApplicant ? `<div class="accepted-applicant"><span class="accepted-check">✓</span><span><strong>Application accepted</strong><small>${escapeHTML(pet.acceptedApplicant)}${pet.acceptedEmail ? ` · ${escapeHTML(pet.acceptedEmail)}` : ''}</small></span></div>` : '';
+        return `<article class="pet-card"><div class="pet-photo-frame">${image ? `<img class="pet-photo" src="${escapeHTML(image)}" alt="${escapeHTML(pet.name)}" loading="lazy">` : '<div class="pet-photo-placeholder">🐾</div>'}<span class="pet-status status-${status.toLowerCase()}">${status}</span><div class="pet-card-actions"><button type="button" data-edit-pet="${escapeHTML(id)}">Edit</button><button type="button" data-delete-pet="${escapeHTML(id)}">Delete</button></div></div><div class="pet-card-content"><div class="pet-title-row"><h3>${escapeHTML(pet.name || 'Unnamed pet')}</h3><span>${escapeHTML(pet.species || 'Pet')}</span></div><p class="pet-details">${escapeHTML(pet.breed || 'Breed not specified')} · ${escapeHTML(pet.age || 'Age unknown')}</p><p class="pet-location">⌖ ${escapeHTML(pet.location || 'Location not specified')}</p>${pet.description ? `<p class="pet-description">${escapeHTML(pet.description)}</p>` : ''}${accepted}</div></article>`;
+      }).join('') : '<div class="pet-empty"><h2>No pet profiles yet</h2><p>Add an adoptable pet to get started.</p></div>';
     }
-
     function renderInquiries() {
       const pending = readInquiries().filter((item) => (item.status || 'Pending') === 'Pending').sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       const count = page.querySelector('[data-pending-count]');
       if (count) count.textContent = `${pending.length} pending`;
-      inquiryList.innerHTML = pending.length ? pending.map((inquiry) => `<article class="inquiry-card"><span class="inquiry-avatar" aria-hidden="true">${escapeHTML((inquiry.applicant || 'A').trim().charAt(0).toUpperCase())}</span><div class="inquiry-details"><div class="inquiry-name-row"><h3>${escapeHTML(inquiry.applicant || 'Applicant')}</h3><span class="inquiry-status inquiry-pending">Pending</span></div><p class="inquiry-pet">Interested in <strong>${escapeHTML(inquiry.petName || 'a PawLink pet')}</strong> · ${escapeHTML(dateLabel(inquiry.createdAt))}</p><p class="inquiry-note">${escapeHTML(inquiry.note || 'No message provided.')}</p><a class="inquiry-email" href="mailto:${escapeHTML(inquiry.email || '')}">${escapeHTML(inquiry.email || 'No email provided')}</a></div><div class="inquiry-actions"><button class="button approve-button" type="button" data-inquiry-action="approve" data-inquiry-id="${escapeHTML(inquiry.id)}">Approve</button><button class="button decline-button" type="button" data-inquiry-action="decline" data-inquiry-id="${escapeHTML(inquiry.id)}">Decline</button></div></article>`).join('') : '<div class="inquiry-empty"><span aria-hidden="true">✉</span><h3>No pending adoption inquiries</h3><p>Accepted applications are shown on their pet cards. Declined applications are removed from this queue.</p></div>';
+      inquiryList.innerHTML = pending.length ? pending.map((item) => `<article class="inquiry-card"><span class="inquiry-avatar">${escapeHTML((item.applicant || 'A').charAt(0).toUpperCase())}</span><div class="inquiry-details"><div class="inquiry-name-row"><h3>${escapeHTML(item.applicant || 'Applicant')}</h3><span class="inquiry-status">Pending</span></div><p class="inquiry-pet">Interested in <strong>${escapeHTML(item.petName || 'a PawLink pet')}</strong> · ${escapeHTML(dateLabel(item.createdAt))}</p><p class="inquiry-note">${escapeHTML(item.note || 'No message provided.')}</p><a class="inquiry-email" href="mailto:${escapeHTML(item.email || '')}">${escapeHTML(item.email || 'No email provided')}</a></div><div class="inquiry-actions"><button class="button approve-button" type="button" data-inquiry-action="approve" data-inquiry-id="${escapeHTML(item.id)}">Approve</button><button class="button decline-button" type="button" data-inquiry-action="decline" data-inquiry-id="${escapeHTML(item.id)}">Decline</button></div></article>`).join('') : '<div class="inquiry-empty"><h3>No pending adoption inquiries</h3><p>Approved applications show on pet cards. Declined inquiries are removed from the queue.</p></div>';
     }
-
-    function openEditor(pet = null) {
+    function showEditor(pet = null) {
       form.reset();
       form.elements.id.value = pet?.id || '';
       form.elements.name.value = pet?.name || '';
@@ -102,21 +102,16 @@
       form.elements.breed.value = pet?.breed || '';
       form.elements.age.value = pet?.age || '';
       form.elements.location.value = pet?.location || '';
-      form.elements.image.value = pet?.image && !String(pet.image).startsWith('data:') ? pet.image : '';
+      form.elements.image.value = pet?.image || '';
       form.elements.description.value = pet?.description || '';
       form.elements.status.value = pet?.status || 'Available';
-      const feedback = page.querySelector('[data-pet-feedback]');
-      if (feedback) feedback.textContent = '';
+      page.querySelector('[data-pet-feedback]').textContent = '';
       page.querySelector('#pet-dialog-title').textContent = pet ? 'Edit pet profile' : 'Add adoptable pet';
-      if (typeof dialog.showModal === 'function') dialog.showModal();
-      else dialog.setAttribute('open', '');
+      if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
     }
-    function closeEditor() {
-      if (typeof dialog.close === 'function' && dialog.open) dialog.close();
-      else dialog.removeAttribute('open');
-    }
+    function closeEditor() { if (dialog.close && dialog.open) dialog.close(); else dialog.removeAttribute('open'); }
 
-    page.querySelector('[data-add-pet]')?.addEventListener('click', () => openEditor());
+    addButton.addEventListener('click', () => showEditor());
     page.querySelectorAll('[data-close-pet]').forEach((button) => button.addEventListener('click', closeEditor));
     dialog.addEventListener('click', (event) => { if (event.target === dialog) closeEditor(); });
     form.addEventListener('submit', (event) => {
@@ -124,65 +119,49 @@
       if (!form.reportValidity()) return;
       const data = new FormData(form);
       const id = String(data.get('id') || '');
-      const current = readPets();
-      const previous = current.find((pet) => String(pet.id) === id);
+      const oldRecords = readPets();
+      const old = oldRecords.find((pet) => String(pet.id) === id);
       const status = String(data.get('status') || 'Available');
-      const nextPet = { ...(previous || {}), id: id || `pet-${Date.now()}`, name: String(data.get('name') || '').trim(), species: String(data.get('species') || 'Other'), breed: String(data.get('breed') || '').trim(), age: String(data.get('age') || '').trim(), location: String(data.get('location') || '').trim(), image: safeImageURL(String(data.get('image') || '').trim()), description: String(data.get('description') || '').trim(), status, available: status !== 'Adopted', updatedAt: new Date().toISOString() };
-      const updated = id ? current.map((pet) => String(pet.id) === id ? nextPet : pet) : [nextPet, ...current];
-      if (persist(PETS_KEY, updated)) { closeEditor(); renderPets(); }
+      const pet = { ...(old || {}), id: id || `pet-${Date.now()}`, name: String(data.get('name')).trim(), species: String(data.get('species')), breed: String(data.get('breed')).trim(), age: String(data.get('age')).trim(), location: String(data.get('location')).trim(), image: safeImageURL(String(data.get('image') || '').trim()), description: String(data.get('description') || '').trim(), status, available: status !== 'Adopted', updatedAt: new Date().toISOString() };
+      const next = id ? oldRecords.map((record) => String(record.id) === id ? pet : record) : [pet, ...oldRecords];
+      if (save(PETS_KEY, next)) { closeEditor(); renderPets(); }
     });
 
     grid.addEventListener('click', (event) => {
       const edit = event.target.closest('[data-edit-pet]');
-      if (edit) { const pet = readPets().find((item) => String(item.id) === edit.dataset.editPet); if (pet) openEditor(pet); return; }
+      if (edit) { const pet = readPets().find((record) => String(record.id) === edit.dataset.editPet); if (pet) showEditor(pet); return; }
       const remove = event.target.closest('[data-delete-pet]');
-      if (!remove || !confirm('Delete this pet profile? Related inquiries will also be removed.')) return;
+      if (!remove || !confirm('Delete this pet and its related inquiries?')) return;
       const petId = remove.dataset.deletePet;
-      const nextPets = readPets().filter((pet) => String(pet.id) !== petId);
-      const nextInquiries = readInquiries().filter((inquiry) => String(inquiry.petId) !== petId);
-      if (persist(PETS_KEY, nextPets)) persist(INQUIRIES_KEY, nextInquiries);
-      renderPets(); renderInquiries();
+      if (save(PETS_KEY, readPets().filter((pet) => String(pet.id) !== petId))) {
+        save(INQUIRIES_KEY, readInquiries().filter((inquiry) => String(inquiry.petId) !== petId));
+        renderPets(); renderInquiries();
+      }
     });
 
     inquiryList.addEventListener('click', (event) => {
       const button = event.target.closest('button[data-inquiry-action]');
       if (!button) return;
-      const inquiryId = button.dataset.inquiryId;
+      const id = button.dataset.inquiryId;
       const action = button.dataset.inquiryAction;
-      const currentInquiries = readInquiries();
-      const inquiry = currentInquiries.find((item) => String(item.id) === inquiryId && (item.status || 'Pending') === 'Pending');
+      const all = readInquiries();
+      const inquiry = all.find((item) => String(item.id) === id && (item.status || 'Pending') === 'Pending');
       if (!inquiry) return;
-      const remaining = currentInquiries.filter((item) => String(item.id) !== inquiryId);
-      if (action === 'decline') {
-        if (persist(INQUIRIES_KEY, remaining)) renderInquiries();
-        return;
-      }
+      const remaining = all.filter((item) => String(item.id) !== id);
+      if (action === 'decline') { if (save(INQUIRIES_KEY, remaining)) renderInquiries(); return; }
       if (action !== 'approve') return;
-      const currentPets = readPets();
-      const petIndex = currentPets.findIndex((pet) => String(pet.id) === String(inquiry.petId) || (inquiry.petName && String(pet.name).toLowerCase() === String(inquiry.petName).toLowerCase()));
-      if (petIndex < 0) {
-        const feedback = page.querySelector('[data-pet-feedback]');
-        if (feedback) feedback.textContent = `Couldn't match inquiry for ${inquiry.petName || 'this pet'} to a profile. Update the inquiry's petId or petName.`;
-        return;
-      }
-      const oldPet = currentPets[petIndex];
-      const updatedPets = currentPets.slice();
-      updatedPets[petIndex] = { ...oldPet, status: 'Pending', acceptedApplicant: inquiry.applicant || 'Applicant', acceptedEmail: inquiry.email || '', acceptedAt: new Date().toISOString() };
-      // Do not remove the inquiry unless the pet's accepted applicant is saved.
-      if (!persist(PETS_KEY, updatedPets)) return;
-      if (!persist(INQUIRIES_KEY, remaining)) {
-        updatedPets[petIndex] = oldPet;
-        persist(PETS_KEY, updatedPets);
-        return;
-      }
-      renderPets();
-      renderInquiries();
+      const petRecords = readPets();
+      const petIndex = petRecords.findIndex((pet) => String(pet.id) === String(inquiry.petId) || String(pet.name).toLowerCase() === String(inquiry.petName || '').toLowerCase());
+      if (petIndex < 0) { page.querySelector('[data-pet-feedback]').textContent = `Pet not found for ${inquiry.petName || 'this inquiry'}.`; return; }
+      const oldPet = petRecords[petIndex];
+      const newPetRecords = petRecords.slice();
+      newPetRecords[petIndex] = { ...oldPet, status: 'Pending', acceptedApplicant: inquiry.applicant || 'Applicant', acceptedEmail: inquiry.email || '', acceptedAt: new Date().toISOString() };
+      if (!save(PETS_KEY, newPetRecords)) return;
+      if (!save(INQUIRIES_KEY, remaining)) { save(PETS_KEY, petRecords); return; }
+      renderPets(); renderInquiries();
     });
 
-    window.addEventListener('storage', (event) => {
-      if (event.key === PETS_KEY || event.key === INQUIRIES_KEY || event.key === null) { renderPets(); renderInquiries(); }
-    });
-    window.addEventListener('focus', () => { renderPets(); renderInquiries(); });
+    window.addEventListener('storage', (event) => { if (event.key === PETS_KEY || event.key === INQUIRIES_KEY || event.key === null) { renderPets(); renderInquiries(); } });
     renderPets();
     renderInquiries();
   }
