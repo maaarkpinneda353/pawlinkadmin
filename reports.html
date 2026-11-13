@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="reports.css">
+  <link rel="stylesheet" href="reports.css?v=3">
   <script src="app.js" defer></script>
-  <script src="reports.js" defer></script>
+  <script src="reports.js?v=3" defer></script>
 </head>
 <body>
   <div data-admin-shell>
@@ -21,7 +21,16 @@
       </header>
       <section class="reports-banner" aria-label="Community reports banner"><div class="reports-banner-copy"><span class="banner-kicker">PAWLINK COMMUNITY</span><h2>Neighbors helping<br>neighbors.</h2><p>Every update brings our community closer to a happy reunion.</p></div><span class="reports-banner-art" aria-hidden="true">🐾</span></section>
       <section class="feed-controls" aria-label="Community feed controls">
-        <div class="feed-filter-row"><div class="report-filter-pills" role="group" aria-label="Filter community posts" data-report-filters><button class="report-filter is-selected" type="button" data-report-category="all" aria-pressed="true">All updates</button><button class="report-filter" type="button" data-report-category="lost" aria-pressed="false">Lost pets</button><button class="report-filter" type="button" data-report-category="found" aria-pressed="false">Found pets</button><button class="report-filter" type="button" data-report-category="reunion" aria-pressed="false">Reunions</button><button class="report-filter" type="button" data-report-category="community" aria-pressed="false">Community</button></div><span class="feed-result-count" data-report-count aria-live="polite"></span></div>
+        <div class="feed-filter-row">
+          <div class="report-filter-pills" role="group" aria-label="Filter community posts" data-report-filters>
+            <button class="report-filter is-selected" type="button" data-report-category="all" aria-pressed="true">All updates</button>
+            <button class="report-filter" type="button" data-report-category="lost" aria-pressed="false">Lost pets</button>
+            <button class="report-filter" type="button" data-report-category="found" aria-pressed="false">Found pets</button>
+            <button class="report-filter" type="button" data-report-category="reunion" aria-pressed="false">Reunions</button>
+            <button class="report-filter" type="button" data-report-category="community" aria-pressed="false">Community</button>
+          </div>
+          <span class="feed-result-count" data-report-count aria-live="polite"></span>
+        </div>
         <label class="report-search"><span aria-hidden="true">⌕</span><span class="visually-hidden">Search community reports</span><input type="search" placeholder="Search names, places, or updates…" data-report-search></label>
       </section>
       <section class="community-feed" aria-label="Community feed"><div class="feed-list" data-report-list aria-live="polite"></div></section>
