@@ -15,14 +15,73 @@
 <body>
   <div data-admin-shell>
     <main class="page-content reports-page" data-reports-page>
-      <header class="page-heading"><div><p class="eyebrow">PAWLINK COMMUNITY</p><h1>Community reports</h1><p>Keep neighbors connected and help pets find their way home.</p></div><button class="button button-primary reports-create" type="button" data-create-post>＋ Create post</button></header>
-      <section class="reports-banner" aria-label="Community reports banner"><div class="reports-banner-copy"><span class="banner-kicker">PAWLINK COMMUNITY</span><h2>Neighbors helping<br>neighbors.</h2><p>Every update brings our community closer to a happy reunion.</p></div><span class="reports-banner-art" aria-hidden="true">🐾</span></section>
-      <section class="feed-controls" aria-label="Community feed controls">
-        <div class="feed-filter-row"><div class="report-filter-pills" role="group" aria-label="Filter community posts" data-report-filters><button class="report-filter is-selected" type="button" data-report-category="all" aria-pressed="true">All updates</button><button class="report-filter" type="button" data-report-category="lost" aria-pressed="false">Lost pets</button><button class="report-filter" type="button" data-report-category="found" aria-pressed="false">Found pets</button><button class="report-filter" type="button" data-report-category="reunion" aria-pressed="false">Reunions</button><button class="report-filter" type="button" data-report-category="community" aria-pressed="false">Community</button></div><span class="feed-result-count" data-report-count aria-live="polite"></span></div>
-        <label class="report-search"><span aria-hidden="true">⌕</span><span class="visually-hidden">Search community reports</span><input type="search" placeholder="Search names, places, or updates…" data-report-search></label>
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">PAWLINK COMMUNITY</p>
+          <h1>Community reports</h1>
+          <p>Keep neighbors connected and help pets find their way home.</p>
+        </div>
+        <button class="button button-primary reports-create" type="button" data-create-post>＋ Create post</button>
+      </header>
+      <section class="reports-banner" aria-label="Community reports banner">
+        <div class="reports-banner-copy">
+          <span class="banner-kicker">PAWLINK COMMUNITY</span>
+          <h2>Neighbors helping<br>neighbors.</h2>
+          <p>Every update brings our community closer to a happy reunion.</p>
+        </div>
+        <span class="reports-banner-art" aria-hidden="true">🐾</span>
       </section>
-      <section class="community-feed" aria-label="Community feed"><div class="feed-list" data-report-list aria-live="polite"></div></section>
-      <dialog class="report-dialog" data-post-dialog aria-labelledby="post-dialog-title"><form class="report-form" data-post-form><div class="report-dialog-heading"><div><p class="eyebrow">COMMUNITY FEED</p><h2 id="post-dialog-title">Create a post</h2></div><button class="report-dialog-close" type="button" aria-label="Close dialog" data-close-post>×</button></div><input type="hidden" name="id"><label for="post-category">Category</label><select id="post-category" name="category" required><option value="lost">Lost pet</option><option value="found">Found pet</option><option value="reunion">Reunion</option><option value="community">Community update</option></select><label for="post-caption">Caption</label><textarea id="post-caption" name="caption" rows="4" maxlength="700" placeholder="Share an update with your neighbors…" required></textarea><label for="post-image">Image URL <span class="optional-text">(optional)</span></label><input id="post-image" name="image" type="url" placeholder="https://example.com/photo.jpg"><label class="reunited-option"><input name="reunited" type="checkbox"><span>Mark pet as reunited</span></label><div class="report-dialog-actions"><button class="button report-cancel" type="button" data-close-post>Cancel</button><button class="button button-primary" type="submit" data-post-submit>Publish post</button></div></form></dialog>
+      <section class="feed-controls" aria-label="Community feed controls">
+        <div class="feed-filter-row">
+          <div class="report-filter-pills" role="group" aria-label="Filter community posts" data-report-filters>
+            <button class="report-filter is-selected" type="button" data-report-category="all" aria-pressed="true">All updates</button>
+            <button class="report-filter" type="button" data-report-category="lost" aria-pressed="false">Lost pets</button>
+            <button class="report-filter" type="button" data-report-category="found" aria-pressed="false">Found pets</button>
+            <button class="report-filter" type="button" data-report-category="reunion" aria-pressed="false">Reunions</button>
+            <button class="report-filter" type="button" data-report-category="community" aria-pressed="false">Community</button>
+          </div>
+          <span class="feed-result-count" data-report-count aria-live="polite"></span>
+        </div>
+        <label class="report-search">
+          <span aria-hidden="true">⌕</span>
+          <span class="visually-hidden">Search community reports</span>
+          <input type="search" placeholder="Search names, places, or updates…" data-report-search>
+        </label>
+      </section>
+      <section class="community-feed" aria-label="Community feed">
+        <div class="feed-list" data-report-list aria-live="polite"></div>
+      </section>
+      <dialog class="report-dialog" data-post-dialog aria-labelledby="post-dialog-title">
+        <form class="report-form" data-post-form>
+          <div class="report-dialog-heading">
+            <div>
+              <p class="eyebrow">COMMUNITY FEED</p>
+              <h2 id="post-dialog-title">Create a post</h2>
+            </div>
+            <button class="report-dialog-close" type="button" aria-label="Close dialog" data-close-post>×</button>
+          </div>
+          <input type="hidden" name="id">
+          <label for="post-category">Category</label>
+          <select id="post-category" name="category" required>
+            <option value="lost">Lost pet</option>
+            <option value="found">Found pet</option>
+            <option value="reunion">Reunion</option>
+            <option value="community">Community update</option>
+          </select>
+          <label for="post-caption">Caption</label>
+          <textarea id="post-caption" name="caption" rows="4" maxlength="700" placeholder="Share an update with your neighbors…" required></textarea>
+          <label for="post-image">Image URL <span class="optional-text">(optional)</span></label>
+          <input id="post-image" name="image" type="url" placeholder="https://example.com/photo.jpg">
+          <label class="reunited-option">
+            <input name="reunited" type="checkbox">
+            <span>Mark pet as reunited</span>
+          </label>
+          <div class="report-dialog-actions">
+            <button class="button report-cancel" type="button" data-close-post>Cancel</button>
+            <button class="button button-primary" type="submit" data-post-submit>Publish post</button>
+          </div>
+        </form>
+      </dialog>
     </main>
   </div>
 </body>
