@@ -1,0 +1,76 @@
+/* Additional resilient Pet Shop UI styling */
+.shop-page { width:min(100%,1240px); margin:0 auto; }
+.shop-page .shop-heading { display:flex; align-items:center; justify-content:space-between; gap:18px; }
+.shop-page .add-item-button { display:inline-flex; min-height:42px; align-items:center; justify-content:center; padding:0 15px; border:0; border-radius:10px; background:#2563eb; color:#fff; cursor:pointer; font:600 11px Inter,Arial,sans-serif; }
+.shop-page .shop-hero { position:relative; display:flex; min-height:190px; align-items:center; overflow:hidden; margin-bottom:22px; padding:28px 34px; border-radius:18px; background:linear-gradient(112deg,#713f12,#c2410c 65%,#f59e0b); color:#fff; }
+.shop-page .shop-hero h2 { margin:9px 0; font-size:clamp(24px,3vw,32px); line-height:1.15; }
+.shop-page .shop-hero p { color:#ffedd5; font-size:11px; }
+.shop-page .shop-hero-kicker { color:#ffedd5; font-size:9px; font-weight:700; letter-spacing:.14em; }
+.shop-page .shop-hero-art { position:absolute; right:10%; font-size:68px; }
+.shop-toolbar { display:grid; gap:13px; margin-bottom:25px; padding:16px; border:1px solid var(--border); border-radius:14px; background:var(--surface); box-shadow:var(--shadow-card); }
+.shop-filter-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.shop-filter-pills { display:flex; flex-wrap:wrap; gap:7px; }
+.shop-filter { min-height:33px; padding:0 12px; border:1px solid var(--border); border-radius:99px; background:var(--surface); color:var(--muted); cursor:pointer; font:500 10px Inter,Arial,sans-serif; }
+.shop-filter:hover { border-color:#93c5fd; color:var(--primary); }
+.shop-filter.is-selected { border-color:var(--primary); background:var(--primary); color:white; }
+.shop-result-count { color:var(--muted); font-size:10px; }
+.shop-search { display:flex; height:41px; align-items:center; gap:10px; padding:0 12px; border:1px solid var(--border); border-radius:9px; background:var(--bg); color:var(--muted); }
+.shop-search input { width:100%; height:100%; border:0; outline:0; background:transparent; color:var(--text); font:11px Inter,Arial,sans-serif; }
+.product-section { margin-bottom:35px; }
+.shop-page .section-title-row { display:flex; justify-content:space-between; margin-bottom:15px; }
+.shop-page .section-title-row h2 { margin:0; font-size:17px; }
+.product-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.product-card { overflow:hidden; border:1px solid var(--border); border-radius:14px; background:var(--surface); box-shadow:var(--shadow-card); }
+.product-photo-wrap { position:relative; height:190px; overflow:hidden; background:var(--surface-soft); }
+.product-photo { display:block; width:100%; height:100%; object-fit:cover; }
+.product-placeholder { display:grid; width:100%; height:100%; place-items:center; font-size:42px; }
+.product-category { position:absolute; top:10px; left:10px; padding:5px 8px; border-radius:99px; background:#fff; color:#334155; font-size:9px; font-weight:600; }
+.product-admin-actions { position:absolute; top:10px; right:10px; display:flex; gap:5px; }
+.product-admin-actions button { padding:6px 9px; border:1px solid rgb(255 255 255 / 40%); border-radius:7px; background:rgb(15 23 42 / 78%); color:#fff; cursor:pointer; font-size:9px; font-weight:600; }
+.product-admin-actions button:last-child { color:#fecaca; }
+.product-card-body { padding:14px 15px 15px; }
+.product-title-row { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.product-title-row h3 { margin:0; font-size:13px; }
+.product-title-row strong { color:var(--primary); font-size:12px; white-space:nowrap; }
+.product-description { min-height:42px; color:var(--muted); font-size:10px; line-height:1.55; }
+.product-meta,.product-review-summary { display:flex; align-items:center; flex-wrap:wrap; gap:8px; color:var(--muted); font-size:9px; }
+.product-meta { justify-content:space-between; padding:9px 0; border-top:1px solid var(--border); }
+.star-display { color:#f59e0b; letter-spacing:1px; white-space:nowrap; }
+.product-review-summary button,.add-review-button { border:0; background:transparent; color:var(--primary); cursor:pointer; font:600 9px Inter,Arial,sans-serif; }
+.add-review-button { margin-top:10px; padding:7px 0; }
+.shop-empty { grid-column:1/-1; padding:40px 20px; border:1px dashed var(--border); border-radius:14px; text-align:center; color:var(--muted); }
+.shop-empty h2 { color:var(--text); }
+.product-dialog,.review-dialog { position:fixed; inset:0; width:min(560px,calc(100% - 28px)); max-width:none; max-height:min(90vh,760px); margin:auto; padding:0; overflow:auto; border:1px solid var(--border); border-radius:16px; background:var(--surface); color:var(--text); box-shadow:0 24px 80px rgb(15 23 42 / 25%); }
+.product-dialog[open],.review-dialog[open] { display:block; }
+.product-dialog::backdrop,.review-dialog::backdrop { background:rgb(15 23 42 / 58%); backdrop-filter:blur(3px); }
+.product-form,.review-dialog-inner { display:grid; gap:10px; padding:23px; }
+.product-dialog-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:5px; }
+.product-dialog-heading h2 { margin:0; font-size:18px; }
+.product-dialog-close { display:grid; width:32px; height:32px; place-items:center; border:0; border-radius:8px; background:var(--surface-soft); color:var(--muted); cursor:pointer; font-size:21px; }
+.product-form label,.review-form label { margin-top:3px; font-size:10px; font-weight:600; }
+.product-form input:not([type=hidden]),.product-form select,.product-form textarea,.review-form input,.review-form select,.review-form textarea { width:100%; min-height:40px; padding:9px 11px; border:1px solid var(--border); border-radius:8px; outline:0; background:var(--surface); color:var(--text); font:11px Inter,Arial,sans-serif; }
+.product-form textarea,.review-form textarea { resize:vertical; line-height:1.5; }
+.shop-form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.shop-form-row>div { display:grid; gap:7px; }
+.product-dialog-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:5px; }
+.product-dialog-actions .button { min-height:38px; padding:0 13px; border-radius:8px; cursor:pointer; font-size:10px; }
+.shop-cancel { border:1px solid var(--border); background:var(--surface); color:var(--muted); }
+.shop-feedback { min-height:14px; margin:0; color:#dc2626; font-size:9px; }
+.review-dialog-inner { gap:13px; }
+.review-form { display:grid; gap:8px; padding-top:12px; border-top:1px solid var(--border); }
+.review-form h3 { margin:0; font-size:13px; }
+.moderation-reviews { display:grid; gap:10px; }
+.moderation-review { padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--bg); }
+.review-row { display:flex; align-items:flex-start; gap:9px; }
+.review-avatar { display:grid; width:28px; height:28px; flex:0 0 auto; place-items:center; border-radius:50%; background:#dbeafe; color:#1d4ed8; font-size:9px; font-weight:700; }
+.review-content { flex:1; min-width:0; }
+.review-head { display:flex; justify-content:space-between; gap:8px; font-size:10px; }
+.review-content p { margin:5px 0; font-size:10px; line-height:1.5; }
+.review-content time { color:var(--muted); font-size:8px; }
+.review-actions { display:flex; gap:5px; }
+.review-actions button { border:0; background:transparent; color:var(--primary); cursor:pointer; font-size:9px; }
+.review-actions button:last-child { color:#dc2626; }
+.no-reviews { color:var(--muted); font-size:10px; }
+.visually-hidden { position:absolute!important; width:1px!important; height:1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; }
+@media(max-width:1000px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:650px){.shop-page .shop-heading{align-items:flex-start;flex-direction:column}.shop-page .shop-hero{padding:24px 22px}.shop-filter-row{align-items:flex-start;flex-direction:column}.shop-filter-pills{width:100%;flex-wrap:nowrap;overflow-x:auto}.shop-filter{flex:0 0 auto}.product-grid{grid-template-columns:1fr}.product-photo-wrap{height:220px}.shop-form-row{grid-template-columns:1fr}}
