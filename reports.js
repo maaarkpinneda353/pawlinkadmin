@@ -18,9 +18,16 @@
       return Array.isArray(value) ? value.filter((post) => post && typeof post === 'object') : [];
     } catch { return []; }
   }
-  if (localStorage.getItem(STORAGE_KEY) === null) localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_POSTS));
-  const posts = readPosts;
-  const savePosts = (entries) => localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  if (localStorage.getItem(STORAGE_KEY) === null) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_POSTS));
+  }
+  
+  const posts = () => readPosts();
+  const savePosts = (entries) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    localStorage.setItem('pawlinkCommunityFeed', JSON.stringify(entries));
+  };
+
   const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const safeImageURL = (value) => {
     if (!value) return '';
@@ -46,115 +53,214 @@
       const searchable = `${post.caption || ''} ${post.location || ''} ${post.author || ''} ${post.category || ''}`.toLowerCase();
       return matchesCategory && searchable.includes(query);
     }).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    page.querySelector('[data-report-count]').textContent = `${visiblePosts.length} ${visiblePosts.length === 1 ? 'post' : 'posts'}`;
+
+    const countNode = page.querySelector('[data-report-count]');
+    if (countNode) countNode.textContent = `${visiblePosts.length} ${visiblePosts.length === 1 ? 'post' : 'posts'}`;
+    
     if (!visiblePosts.length) {
       list.innerHTML = '<div class="report-empty"><span aria-hidden="true">🐾</span><h2>No updates found</h2><p>Try a different search or category filter.</p></div>';
       return;
     }
+
     list.innerHTML = visiblePosts.map((post) => {
       const comments = Array.isArray(post.comments) ? post.comments : [];
       const image = safeImageURL(post.image);
       const reunited = Boolean(post.reunited || post.status === 'Reunited' || post.category === 'reunion');
       const author = post.author || 'PawLink Admin';
-      return `<article class="feed-card" data-post-id="${escapeHTML(post.id)}">
-        <header class="feed-card-header"><span class="feed-avatar" aria-hidden="true">${escapeHTML(author.trim().charAt(0).toUpperCase() || 'P')}</span><div class="feed-author"><strong>${escapeHTML(author)}</strong><span>${escapeHTML(post.location || 'PawLink Community')} · ${escapeHTML(formatDate(post.createdAt))}</span></div><span class="feed-category category-${escapeHTML(post.category)}">${escapeHTML(CATEGORY_LABELS[post.category] || 'Community')}</span><div class="feed-admin-actions"><button class="feed-action" type="button" data-edit-post="${escapeHTML(post.id)}">Edit</button><button class="feed-action feed-delete" type="button" data-delete-post="${escapeHTML(post.id)}">Delete</button></div></header>
+      const postId = escapeHTML(post.id);
+
+      return `<article class="feed-card" data-post-id="${postId}">
+        <header class="feed-card-header">
+          <span class="feed-avatar" aria-hidden="true">${escapeHTML(author.trim().charAt(0).toUpperCase() || 'P')}</span>
+          <div class="feed-author"><strong>${escapeHTML(author)}</strong><span>${escapeHTML(post.location || 'PawLink Community')} · ${escapeHTML(formatDate(post.createdAt))}</span></div>
+          <span class="feed-category category-${escapeHTML(post.category)}">${escapeHTML(CATEGORY_LABELS[post.category] || 'Community')}</span>
+          <div class="feed-admin-actions">
+            <button class="feed-action" type="button" data-edit-post="${postId}">Edit</button>
+            <button class="feed-action feed-delete" type="button" data-delete-post="${postId}">Delete</button>
+          </div>
+        </header>
         ${image ? `<img class="feed-image" src="${escapeHTML(image)}" alt="Community post by ${escapeHTML(author)}" loading="lazy">` : ''}
-        <div class="feed-card-body"><p class="feed-caption">${escapeHTML(post.caption || '')}</p>${reunited ? '<span class="reunited-badge">✓ Reunited</span>' : ''}<div class="feed-reaction-row"><button class="reaction-button" type="button" data-react-post="${escapeHTML(post.id)}" aria-label="Add a reaction">♡ <span>${Number(post.reactions) || 0}</span></button><span class="comment-total">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</span>${!reunited && ['lost', 'found'].includes(post.category) ? `<button class="feed-action mark-reunited" type="button" data-reunite-post="${escapeHTML(post.id)}">Mark reunited</button>` : ''}</div>
-        <div class="comment-thread">${comments.map((comment) => `<div class="comment-row"><span class="comment-avatar" aria-hidden="true">${escapeHTML((comment.author || 'N').trim().charAt(0).toUpperCase())}</span><div class="comment-bubble"><strong>${escapeHTML(comment.author || 'Neighbor')}</strong><p>${escapeHTML(comment.text || '')}</p><time>${escapeHTML(formatDate(comment.createdAt))}</time></div><button class="comment-delete" type="button" data-delete-comment="${escapeHTML(post.id)}" data-comment-id="${escapeHTML(comment.id)}" aria-label="Delete comment">×</button></div>`).join('')}<form class="comment-form" data-comment-form="${escapeHTML(post.id)}"><input name="comment" aria-label="Write a comment" maxlength="240" placeholder="Write a supportive comment…" required><button type="submit">Post</button></form></div></div></article>`;
+        <div class="feed-card-body">
+          <p class="feed-caption">${escapeHTML(post.caption || '')}</p>
+          ${reunited ? '<span class="reunited-badge">✓ Reunited</span>' : ''}
+          <div class="feed-reaction-row">
+            <button class="reaction-button" type="button" data-react-post="${postId}" aria-label="Add a reaction">♡ <span>${Number(post.reactions) || 0}</span></button>
+            <span class="comment-total">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</span>
+            ${!reunited && ['lost', 'found'].includes(post.category) ? `<button class="feed-action mark-reunited" type="button" data-reunite-post="${postId}">Mark reunited</button>` : ''}
+          </div>
+          <div class="comment-thread">
+            ${comments.map((comment) => {
+              const commentId = escapeHTML(comment.id);
+              const cAuthor = escapeHTML(comment.author || 'Neighbor');
+              return `<div class="comment-row">
+                <span class="comment-avatar" aria-hidden="true">${escapeHTML(cAuthor.charAt(0).toUpperCase())}</span>
+                <div class="comment-bubble">
+                  <strong>${cAuthor}</strong>
+                  <p>${escapeHTML(comment.text || '')}</p>
+                  <time>${escapeHTML(formatDate(comment.createdAt))}</time>
+                </div>
+                <button class="comment-delete" type="button" data-delete-comment="${postId}" data-comment-id="${commentId}" aria-label="Delete comment">×</button>
+              </div>`;
+            }).join('')}
+            <form class="comment-form" data-comment-form="${postId}">
+              <input name="comment" aria-label="Write a comment" maxlength="240" placeholder="Write a supportive comment…" required>
+              <button type="submit">Post</button>
+            </form>
+          </div>
+        </div>
+      </article>`;
     }).join('');
   }
 
   function openEditor(post) {
+    if (!form || !dialog) return;
     form.reset();
     form.elements.id.value = post?.id || '';
     form.elements.category.value = post?.category || 'lost';
     form.elements.caption.value = post?.caption || '';
     form.elements.image.value = post?.image || '';
-    form.elements.reunited.checked = Boolean(post?.reunited || post?.status === 'Reunited');
-    page.querySelector('#post-dialog-title').textContent = post ? 'Edit community post' : 'Create a post';
-    page.querySelector('[data-post-submit]').textContent = post ? 'Save changes' : 'Publish post';
+    if (form.elements.reunited) {
+      form.elements.reunited.checked = Boolean(post?.reunited || post?.status === 'Reunited');
+    }
+    const titleEl = page.querySelector('#post-dialog-title');
+    const submitEl = page.querySelector('[data-post-submit]');
+    if (titleEl) titleEl.textContent = post ? 'Edit community post' : 'Create a post';
+    if (submitEl) submitEl.textContent = post ? 'Save changes' : 'Publish post';
     dialog.showModal();
   }
 
-  page.querySelector('[data-create-post]').addEventListener('click', () => openEditor());
-  page.querySelectorAll('[data-close-post]').forEach((button) => button.addEventListener('click', () => dialog.close()));
-  dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const id = String(data.get('id') || '');
-    const existing = posts();
-    const oldPost = existing.find((post) => String(post.id) === id);
-    const reunited = form.elements.reunited.checked;
-    const imageValue = String(data.get('image') || '').trim();
-    const nextPost = {
-      ...(oldPost || {}),
-      id: id || `post-${Date.now()}`,
-      category: reunited ? 'reunion' : String(data.get('category')),
-      caption: String(data.get('caption') || '').trim(),
-      image: safeImageURL(imageValue),
-      author: oldPost?.author || 'PawLink Admin',
-      location: oldPost?.location || 'PawLink Community',
-      createdAt: oldPost?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      status: reunited ? 'Reunited' : (oldPost?.status || 'Active'),
-      reunited,
-      reactions: Number(oldPost?.reactions) || 0,
-      comments: Array.isArray(oldPost?.comments) ? oldPost.comments : []
-    };
-    savePosts(id ? existing.map((post) => String(post.id) === id ? nextPost : post) : [nextPost, ...existing]);
-    dialog.close();
-    render();
-  });
+  const createBtn = page.querySelector('[data-create-post]');
+  if (createBtn) {
+    createBtn.addEventListener('click', () => openEditor(null));
+  }
 
-  page.querySelector('[data-report-filters]').addEventListener('click', (event) => {
-    const button = event.target.closest('[data-report-category]');
-    if (!button) return;
-    selectedCategory = button.dataset.reportCategory;
-    page.querySelectorAll('[data-report-category]').forEach((pill) => {
-      const active = pill === button;
-      pill.classList.toggle('is-selected', active);
-      pill.setAttribute('aria-pressed', String(active));
-    });
-    render();
+  page.querySelectorAll('[data-close-post]').forEach((button) => {
+    button.addEventListener('click', () => dialog?.close());
   });
-  search.addEventListener('input', render);
+  
+  if (dialog) {
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+  }
+
+  if (form) {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const id = String(data.get('id') || '');
+      const existing = posts();
+      const oldPost = existing.find((post) => String(post.id) === id);
+      const reunited = form.elements.reunited ? form.elements.reunited.checked : false;
+      const imageValue = String(data.get('image') || '').trim();
+      
+      const nextPost = {
+        ...(oldPost || {}),
+        id: id || `post-${Date.now()}`,
+        category: reunited ? 'reunion' : String(data.get('category')),
+        caption: String(data.get('caption') || '').trim(),
+        image: safeImageURL(imageValue),
+        author: oldPost?.author || 'Admin',
+        location: oldPost?.location || 'PawLink Community',
+        createdAt: oldPost?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: reunited ? 'Reunited' : (oldPost?.status || 'Active'),
+        reunited,
+        reactions: Number(oldPost?.reactions) || 0,
+        comments: Array.isArray(oldPost?.comments) ? oldPost.comments : []
+      };
+
+      savePosts(id ? existing.map((post) => String(post.id) === id ? nextPost : post) : [nextPost, ...existing]);
+      dialog?.close();
+      render();
+    });
+  }
+
+  const filterContainer = page.querySelector('[data-report-filters]');
+  if (filterContainer) {
+    filterContainer.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-report-category]');
+      if (!button) return;
+      selectedCategory = button.dataset.reportCategory;
+      page.querySelectorAll('[data-report-category]').forEach((pill) => {
+        const active = pill === button;
+        pill.classList.toggle('is-selected', active);
+        pill.setAttribute('aria-pressed', String(active));
+      });
+      render();
+    });
+  }
+
+  if (search) {
+    search.addEventListener('input', render);
+  }
 
   list.addEventListener('click', (event) => {
     const edit = event.target.closest('[data-edit-post]');
-    if (edit) { const post = posts().find((item) => String(item.id) === edit.dataset.editPost); if (post) openEditor(post); return; }
+    if (edit) { 
+      const post = posts().find((item) => String(item.id) === edit.dataset.editPost); 
+      if (post) openEditor(post); 
+      return; 
+    }
+    
     const remove = event.target.closest('[data-delete-post]');
     if (remove) {
-      if (confirm('Delete this post and all of its comments?')) savePosts(posts().filter((post) => String(post.id) !== remove.dataset.deletePost));
-      render(); return;
+      if (confirm('Delete this post and all of its comments?')) {
+        savePosts(posts().filter((post) => String(post.id) !== remove.dataset.deletePost));
+        render();
+      }
+      return;
     }
+    
     const deleteComment = event.target.closest('[data-delete-comment]');
     if (deleteComment) {
-      const updated = posts().map((post) => String(post.id) === deleteComment.dataset.deleteComment ? { ...post, comments: (post.comments || []).filter((comment) => String(comment.id) !== deleteComment.dataset.commentId) } : post);
-      savePosts(updated); render(); return;
+      const updated = posts().map((post) => {
+        if (String(post.id) === deleteComment.dataset.deleteComment) {
+          return { ...post, comments: (post.comments || []).filter((comment) => String(comment.id) !== deleteComment.dataset.commentId) };
+        }
+        return post;
+      });
+      savePosts(updated); 
+      render(); 
+      return;
     }
+    
     const reaction = event.target.closest('[data-react-post]');
     if (reaction) {
       savePosts(posts().map((post) => String(post.id) === reaction.dataset.reactPost ? { ...post, reactions: (Number(post.reactions) || 0) + 1 } : post));
-      render(); return;
+      render(); 
+      return;
     }
+    
     const reunitedButton = event.target.closest('[data-reunite-post]');
     if (reunitedButton) {
       savePosts(posts().map((post) => String(post.id) === reunitedButton.dataset.reunitePost ? { ...post, category: 'reunion', status: 'Reunited', reunited: true, updatedAt: new Date().toISOString() } : post));
       render();
     }
   });
+
   list.addEventListener('submit', (event) => {
     const commentForm = event.target.closest('[data-comment-form]');
     if (!commentForm) return;
     event.preventDefault();
-    const text = String(new FormData(commentForm).get('comment') || '').trim();
+    const inputEl = commentForm.querySelector('input');
+    const text = String(inputEl?.value || '').trim();
     if (!text) return;
+    
     const postId = commentForm.dataset.commentForm;
     const comment = { id: `comment-${Date.now()}`, author: 'Admin', text, createdAt: new Date().toISOString() };
+    
     savePosts(posts().map((post) => String(post.id) === postId ? { ...post, comments: [...(post.comments || []), comment] } : post));
     render();
   });
+
   window.addEventListener('storage', (event) => { if (event.key === STORAGE_KEY) render(); });
+
+  // Deep-link support from Global Search
+  const params = new URLSearchParams(location.search);
+  const editId = params.get('edit');
+  if (editId) {
+    const targetPost = posts().find((p) => String(p.id) === editId);
+    if (targetPost) openEditor(targetPost);
+  }
+
   render();
 })();
